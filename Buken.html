@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<style>
+.container {
+	margin: 20px;
+}
+
+.float-end {
+	float: right;
+}
+
+.btn {
+	padding: 6px 12px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table th, .table td {
+	padding: 8px;
+	border: 1px solid #ddd;
+}
+
+.align-middle {
+	vertical-align: middle !important;
+}
+
+#propertyId, #propertyName, #address, #propertyType, #period,
+	#propertyArea, #price, #syozokuCompanyId, #status {
+	width: 200px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+input[type="submit"] {
+	padding: 6px 12px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+	border: 1px solid black;
+	padding: 8px;
+	text-align: center;
+}
+
+.buken {
+	width: 900px;
+	margin: 20px;
+	font-size: 14px;
+	margin-left: 250px;
+}
+
+.buken2 {
+	width: 70%;
+}
+
+.buken3 {
+	width: 40%;
+}
+
+.empty-space {
+	height: 30px;
+}
+
+
+/* 表单整体样式 */
+form {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+
+/* 表单元素样式 */
+label {
+  display: inline-block;
+  width: 120px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+div {
+  margin-bottom: 10px;
+}
+
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+span {
+  color: #888;
+  font-size: 0.9em;
+}
+
+/* 提交按钮样式 */
+input[type="submit"] {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+input[type="submit"]:focus {
+  outline: none;
+}
+
+</style>
+</head>
+<!-- 
+<head
+	th:replace="common/head :: head_fragment(title = '物件情報一覧', scripts = ~{::script}, links = ~{::link})"></head>
+ -->
+<body>
+	<div class="container">
+		<h1>物件情報一覧</h1>
+		<div class="float-end">
+			<a th:href="@{/user/BukenAdd}" class="btn btn-primary">新規登録はこちら</a>
+		</div>
+
+		<form action="/submit" method="post">
+			<input type="submit" value="Submit"> <input type="text"
+				name="uid">
+		</form>
+
+		<br>
+		<form action="/submitkikan" method="post">
+			<input type="submit" value="Submit"> <input type="text"
+				name="fromdate"> <input type="text" name="todate">
+		</form>
+
+<form action="/search" method="post">
+		<label for="rent">賃料</label>
+		<div>
+			<select id="rentMin" name="rentMin">
+				<option value="">下限なし</option>
+				<option value="0">0</option>
+				<option value="50000">50,000</option>
+				<option value="100000">100,000</option>
+				<option value="150000">150,000</option>
+			</select> ～ <select id="rentMax" name="rentMax">
+				<option value="">上限なし</option>
+				<option value="50000">50,000</option>
+				<option value="100000">100,000</option>
+				<option value="150000">150,000</option>
+				<option value="200000">200,000</option>
+			</select> 
+		</div>
+		<label for="area">専有面積</label>
+		<div>
+			<select id="areaMin" name="areaMin">
+				<option value="">下限なし</option>
+				<option value="0">0</option>
+				<option value="30">30</option>
+				<option value="60">60</option>
+				<option value="100">100</option>
+				<option value="150">150</option>
+			</select> ～ <select id="areaMax" name="areaMax">
+				<option value="">上限なし</option>
+				<option value="30">30</option>
+				<option value="60">60</option>
+				<option value="150">150</option>
+				<option value="200">200</option>
+			</select>
+		</div>
+		<label for="layout">間取り</label>
+		<div>
+			<input type="checkbox" id="layout_none" name="layout" value="">
+			<label for="layout_none">指定なし</label> <input type="checkbox"
+				id="layout_one_room" name="layout" value="ワンルーム"> <label
+				for="layout_one_room">ワンルーム</label> <input type="checkbox"
+				id="layout_1k" name="layout" value="1K"> <label
+				for="layout_1k">1K</label> <input type="checkbox" id="layout_1dk"
+				name="layout" value="1DK"> <label for="layout_1dk">1DK</label>
+			<input type="checkbox" id="layout_1ldk" name="layout" value="1LDK">
+			<label for="layout_1ldk">1LDK</label> <input type="checkbox"
+				id="layout_2k" name="layout" value="2K"> <label
+				for="layout_2k">2K</label> <input type="checkbox" id="layout_2dk"
+				name="layout" value="2DK"> <label for="layout_2dk">2DK</label>
+			<input type="checkbox" id="layout_2ldk" name="layout" value="2LDK">
+			<label for="layout_2ldk">2LDK</label> <input type="checkbox"
+				id="layout_3k" name="layout" value="3K"> <label
+				for="layout_3k">3K</label> <input type="checkbox" id="layout_3dk"
+				name="layout" value="3DK"> <label for="layout_3dk">3DK</label>
+			<input type="checkbox" id="layout_3ldk" name="layout" value="3LDK">
+			<label for="layout_3ldk">3LDK</label> <input type="checkbox"
+				id="layout_4k" name="layout" value="4K"> <label
+				for="layout_4k">4K</label> <input type="checkbox" id="layout_4dk"
+				name="layout" value="4DK"> <label for="layout_4dk">4DK</label>
+			<input type="checkbox" id="layout_4ldk" name="layout" value="4LDK以上">
+			<label for="layout_4ldk">4LDK以上</label>
+		</div>
+		<label for="minutesToStation">駅徒歩分</label>
+		<div>
+			<input type="radio" id="minutes_none" name="minutesToStation"
+				value="" checked> <label for="minutes_none">指定なし</label> <input
+				type="radio" id="minutes_1" name="minutesToStation" value="1分以内">
+			<label for="minutes_1">1分以内</label> <input type="radio"
+				id="minutes_5" name="minutesToStation" value="5分以内"> <label
+				for="minutes_5">5分以内</label> <input type="radio" id="minutes_7"
+				name="minutesToStation" value="7分以内"> <label for="minutes_7">7分以内</label>
+			<input type="radio" id="minutes_10" name="minutesToStation"
+				value="10分以内"> <label for="minutes_10">10分以内</label> <input
+				type="radio" id="minutes_15" name="minutesToStation" value="15分以内">
+			<label for="minutes_15">15分以内</label> <input type="radio"
+				id="minutes_20" name="minutesToStation" value="20分以内"> <label
+				for="minutes_20">20分以内</label>
+		</div>
+
+		<label for="age">築年数</label>
+		<div>
+			<input type="radio" id="age_new" name="age" value="新築" checked>
+			<label for="age_new">新築</label> <input type="radio" id="age_3"
+				name="age" value="3年以内"> <label for="age_3">3年以内</label> <input
+				type="radio" id="age_5" name="age" value="5年以内"> <label
+				for="age_5">5年以内</label> <input type="radio" id="age_10" name="age"
+				value="10年以内"> <label for="age_10">10年以内</label> <input
+				type="radio" id="age_15" name="age" value="15年以内"> <label
+				for="age_15">15年以内</label> <input type="radio" id="age_20"
+				name="age" value="20年以内"> <label for="age_20">20年以内</label>
+			<input type="radio" id="age_25" name="age" value="25年以内"> <label
+				for="age_25">25年以内</label> <input type="radio" id="age_30"
+				name="age" value="30年以内"> <label for="age_30">30年以内</label>
+		</div>
+
+		<label for="structure">建物構造</label>
+		<div>
+			<input type="checkbox" id="structure_none" name="structure" value="">
+			<label for="structure_none">指定なし</label> <input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">鉄筋系</label> <input type="checkbox"
+				id="structure_wooden" name="structure" value="木造系"> <label
+				for="structure_wooden">木造系</label> <input type="checkbox"
+				id="structure_steel" name="structure" value="鉄骨系"> <label
+				for="structure_steel">鉄骨系</label> <input type="checkbox"
+				id="structure_other" name="structure" value="ブロック・その他"> <label
+				for="structure_other">ブロック・その他</label>
+		</div>
+		
+		<label for="tyuusyajyou">駐車場</label>
+		<div>
+			<input type="checkbox" id="tyuusyajyouSiteiNasi" name="tyuusyajyouSiteiNasi" value="">
+			<label for="tyuusyajyouSiteiNasi">指定なし</label> 
+			<input type="checkbox"
+				id="tyuusyajyouari" name="tyuusyajyouari" value="あり"> <label
+				for="tyuusyajyouari">あり</label> 
+				<input type="checkbox"
+				id="tyuusyajyounasi" name="tyuusyajyounasi" value="なし"> <label
+				for="tyuusyajyounasi">なし</label> 
+		</div>
+		
+		<label for="kaisou">階層</label>
+		<div>
+			<input type="checkbox" id="kaisou" name="kaisou" value="">
+			<label for="kaisounasi">指定なし</label> 
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">1階</label> 
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">2階</label> 
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">3階</label>
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">4階</label> 	
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">5階</label>
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">6階</label>
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">7階</label>
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">8階</label>
+			<input type="checkbox"
+				id="structure_reinforced" name="structure" value="鉄筋系"> <label
+				for="structure_reinforced">9階</label> 	 		
+				
+		</div>
+		<input type="submit" value="検索">
+</form>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名字</th>
+					<th>住所</th>
+					<th>物件タイプ</th>
+					<th>販売期間</th>
+					<th>物件面積</th>
+					<th>賃料</th>
+					<th>所属会社ID</th>
+					<th>状態</th>
+					<th>駐車場</th>
+					<th>駅から何分</th>
+					<th>建物構築</th>
+					<th>階層</th>
+					<th>写真</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="buken : ${bukenList}" class="align-middle">
+					<td th:text="${buken.propertyId}"></td>
+					<td th:text="${buken.propertyName}"></td>
+					<td th:text="${buken.address}"></td>
+					<td th:text="${buken.propertyType}"></td>
+					<td th:text="${buken.period}"></td>
+					<td th:text="${buken.propertyArea}"></td>
+
+					<td><span th:if="${isVip}"> <span
+							th:text="${#numbers.formatDecimal(new java.math.BigDecimal(buken.price).multiply(new java.math.BigDecimal('0.5')), 1, 'POINT', 2, 'COMMA')}"></span>
+							(VIP)
+					</span> <span th:unless="${isVip}" th:text="${buken.price}"></span></td>
+
+					<td th:text="${buken.syozokuCompanyId}"></td>
+					<td th:text="${buken.status}"></td>
+					<td th:text="${buken.tyuusyajyou}"></td>
+					<td th:text="${buken.ekikaraminute}"></td>
+					<td th:text="${buken.koutiku}"></td>
+					<td th:text="${buken.kaisou}"></td>
+
+					<td><img th:src="@{'/img' + ${buken.imagePath}}"
+						alt="Buken Image" style="width: 200px; height: auto;"></td>
+
+					<td>
+						<form
+							th:action="@{/user/Buken/delete/{id}(id=${buken.propertyId})}"
+							method="post">
+							<button type="submit" class="btn btn-danger">删除</button>
+						</form>
+					</td>
+					<td>
+						<form th:action="@{/user/BukenEdit}" method="post"
+							onsubmit="return confirmOrder()">
+							<input type="hidden" name="updateType" value="status" /> <input
+								type="hidden" name="propertyId" th:value="${buken.propertyId}" />
+							<button type="submit" class="btn btn-danger">注文</button>
+						</form>
+					</td>
+					<td>
+						<form th:action="@{/user/okiniiri}" method="post">
+							<input type="hidden" name="updateType" value="okiniiri" /> <input
+								type="hidden" name="id" th:value="${buken.propertyId}" />
+
+							<button type="submit" class="btn btn-danger">♥</button>
+						</form>
+					</td>
+					<td><a
+						th:href="@{/user/BukenEdit/{propertyId}(propertyId=${buken.propertyId})}"
+						class="btn btn-primary">编辑</a></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="buken">
+			<table th:each="buken : ${bukenList}">
+				<tr>
+					<td rowspan="4"><a
+						th:href="@{/user/bukenSyousai/{propertyId}(propertyId=${buken.propertyId})}"><img
+							th:src="@{'/img' + ${buken.imagePath}}" alt="Buken Image"
+							style="width: 200px; height: auto;"></a></td>
+					<td class="buken2" th:text="${buken.propertyName}">行1列2</td>
+
+					<td rowspan="4" class="buken3"><span th:if="${isVip}">
+							<span
+							th:text="${#numbers.formatDecimal(new java.math.BigDecimal(buken.price).multiply(new java.math.BigDecimal('0.5')), 1, 'POINT', 2, 'COMMA')}"
+							style="color: red;"></span> <span style="color: red;">円</span>
+							(VIP)
+					</span> <span th:unless="${isVip}" th:text="${buken.price}"
+						style="color: red;"></span> <span style="color: red;">円</span></td>
+				</tr>
+				<tr>
+					<td class="buken2" th:text="${buken.address}">行2列2</td>
+				</tr>
+				<tr>
+					<td class="buken2" th:text="${buken.propertyType}">行3列2</td>
+				</tr>
+				<tr>
+					<td class="buken2" th:text="${buken.propertyArea}">行4列2</td>
+				</tr>
+				<div class="empty-space"></div>
+			</table>
+
+		</div>
+	</div>
+	<script>
+		function confirmOrder() {
+			return confirm("ご注文いたしますか?");
+		}
+	</script>
+</body>
+</html>
